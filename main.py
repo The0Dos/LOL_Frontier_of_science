@@ -1,45 +1,20 @@
-import matplotlib.pyplot as plt
-import pandas as pd
-import pylab as pl
-import numpy as np
-from sklearn import linear_model
-from sklearn.metrics import r2_score
-df = pd.read_csv("dsready.csv")
+from spacy.lang.ru import Russian
 
+tag_list = ['']
+while tag_list[-1] != '/': #Кодовое слово
+    tag_list.append(input())
+tag_list.pop(0)
+tag_list.pop()
 
-cdf = df [['Number', 'Coef', 'Result']]
+nlp = Russian()
+doc = nlp("Проект направлен на разработку компактных высокопроизводительных и энергоэффективных систем, вырабатывающих кислородные и иные газовоздушные смеси из атмосферного воздуха для биомедицинских целей. Новизна решения заключается в использовании магнитной сепарации воздух с применением магнитного сепаратора кислорода как отдельно, так и в сочетании с существующими технологиями. Это позволит с одной стороны снизить весовые и габаритные параметры устройств, а с другой - повысить производительность")
 
-
-
-
-msk = np.random.rand(len(df)) < 0.8
-train = cdf[msk]
-test = cdf[~msk]
-
-
-regr = linear_model.LinearRegression()
-train_x = np.asanyarray(train[['Coef']])
-train_y = np.asanyarray(train[['Result']])
-regr.fit(train_x, train_y)
-print('Coef:', regr.coef_)
-print('Intercept:', regr.intercept_)
-
-plt.scatter(train.Coef, train.Result, color = 'orange')
-plt.plot(train_x, regr.coef_[0][0] * train_x + regr.intercept_[0], '-r')
-plt.xlabel("Coef")
-plt.ylabel("Result")
-
-
-test_x = np.asanyarray(test[['Coef']])
-test_y = np.asanyarray(test[['Result']])
-test_y_ = regr.predict(test_x)
-
-print("Mean absolute error: %.2f" % np.mean(np.absolute(test_y_ - test_y)))
-print("Residual sum of squares (MSE): %.2f" % np.mean(np.absolute(test_y_ - test_y) ** 2))
-print("R2 score: %.2f" % r2_score(test_y_, test_y))
-
-plt.show()
-
-
-
-
+boole = False
+for tag_element in tag_list:
+    for word in doc:
+        if tag_element == word.text:
+            boole = True
+if boole:
+    print('Проект подходит')
+else:
+    print('Проект не найден')
